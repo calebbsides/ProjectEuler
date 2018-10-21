@@ -847,14 +847,18 @@ var problems = [
 
 		fs.readFile(filePath, 'utf8', (err, data) => {
 			var triangle = data.split("\n");
+
 			for (var i = 0; i < triangle.length; i++) {
 				triangle[i] = triangle[i].split(" ");
 			}
+
 			for (var i = triangle.length - 2; i >= 0; i--) {
 				var row = triangle[i];
+				var nextRow = triangle[i + 1];
+
 				for (var j = 0; j < row.length; j++) {
-					var max = utils.getMax(bigInt(triangle[i + 1][j], 10), bigInt(triangle[i + 1][j + 1]));
-					row[j] = bigInt(row[j]).add(max);
+					var max = utils.getMax(parseInt(nextRow[j]), parseInt(nextRow[j + 1]));
+					row[j] = parseInt(row[j]) + max;
 				}
 			}
 
@@ -862,11 +866,5 @@ var problems = [
 		});
 	}
 ];
-
-// RUN ALL
-// problems.forEach(function(problem, i) {
-// 	console.log('Answer ' + i + ': ');
-// 	problem();
-// });
 
 problems[19]();
