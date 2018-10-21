@@ -1,4 +1,14 @@
+// LIBRARIES
+var fs = require('fs');
+var path = require('path');
+var bigInt = require("big-integer");
+
+//  UTILITY FUNCTIONS
 var utils = {
+	getMax: (a, b) => {
+		return a > b ? a : b;
+	},
+
 	getSum: (total, num) => {
 		return total + num;
 	},
@@ -49,8 +59,69 @@ var utils = {
 
 		return divisors;
 	},
+
+	getStringLength: num => {
+
+		var numToString = new Map([
+			[1, "one"],
+			[2, "two"],
+			[3, "three"],
+			[4, "four"],
+			[5, "five"],
+			[6, "six"],
+			[7, "seven"],
+			[8, "eight"],
+			[9, "nine"],
+			[10, "ten"],
+			[11, "eleven"],
+			[12, "twelve"],
+			[13, "thirteen"],
+			[14, "fourteen"],
+			[15, "fifteen"],
+			[16, "sixteen"],
+			[17, "seventeen"],
+			[18, "eighteen"],
+			[19, "nineteen"],
+			[20, "twenty"],
+			[30, "thirty"],
+			[40, "forty"],
+			[50, "fifty"],
+			[60, "sixty"],
+			[70, "seventy"],
+			[80, "eighty"],
+			[90, "ninety"]
+		]);
+
+		var length = 0;
+
+		if (num < 20) {
+			length = numToString.get(num).length;
+		} else if (num < 100) {
+			length = numToString.get(Math.floor((num / 10)) * 10).length;
+
+			if (num % 10 !== 0) {
+				length += utils.getStringLength(num % 10);
+			}
+		} else if (num < 1000) {
+			length = numToString.get(Math.floor(num / 100)).length;
+
+			if (num % 100 !== 0) {
+				length += ("hundredand").length;
+				length += utils.getStringLength(num % 100);
+			} else {
+				length += ("hundred").length;
+			}
+		} else if (num < 1000000) {
+			length = numToString.get(Math.floor(num / 1000)).length;
+			length += ("thousand").length;
+		}
+
+		return length;
+	}
 };
 
+
+// EULER PROBLEMS
 var problems = [
 	() => {
 		return console.log('Problems from https://projecteuler.net/ in order beginning at 1.');
@@ -695,6 +766,7 @@ var problems = [
 		return console.log(paths);
 	},
 	() => {
+		// TODO: figure out a way around the loss of precision in JS
 		// 16
 		// 2^15 = 32768 and the sum of its digits is 3 + 2 + 7 + 6 + 8 = 26.
 		// What is the sum of the digits of the number 2^1000?
@@ -703,6 +775,92 @@ var problems = [
 
 		return console.log(num);
 	},
+	() => {
+		// 17
+		// If the numbers 1 to 5 are written out in words: one, two, three, four, five, then there are 3 + 3 + 5 + 4 + 4 = 19 letters used in total.
+		// If all the numbers from 1 to 1000 (one thousand) inclusive were written out in words, how many letters would be used?
+		// NOTE: Do not count spaces or hyphens. For example, 342 (three hundred and forty-two) contains 23 letters and 115 (one hundred and fifteen) contains 20 letters. The use of "and" when writing out numbers is in compliance with British usage.
+
+		var num = 0;
+
+		for (var i = 1; i < 1001; i++) {
+			num += utils.getStringLength(i);
+		}
+
+		return console.log(num);
+	}, () => {
+		// 18
+		// 	By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.
+		// 3
+		// 7 4
+		// 2 4 6
+		// 8 5 9 3
+		// That is, 3 + 7 + 4 + 9 = 23.
+		// Find the maximum total from top to bottom of the triangle below
+		// 75
+		// 95 64
+		// 17 47 82
+		// 18 35 87 10
+		// 20 04 82 47 65
+		// 19 01 23 75 03 34
+		// 88 02 77 73 07 63 67
+		// 99 65 04 28 06 16 70 92
+		// 41 41 26 56 83 40 80 70 33
+		// 41 48 72 33 47 32 37 16 94 29
+		// 53 71 44 65 25 43 91 52 97 51 14
+		// 70 11 33 28 77 73 17 78 39 68 17 57
+		// 91 71 52 38 17 14 91 43 58 50 27 29 48
+		// 63 66 04 68 89 53 67 30 73 16 69 87 40 31
+		// 04 62 98 27 23 09 70 98 73 93 38 53 60 04 23
+		// NOTE: As there are only 16384 routes, it is possible to solve this problem by trying every route. However, Problem 67, is the same challenge with a triangle containing one-hundred rows; it cannot be solved by brute force, and requires a clever method! ;o)
+		var triangle = [
+			[75],
+			[95, 64],
+			[17, 47, 82],
+			[18, 35, 87, 10],
+			[20, 04, 82, 47, 65],
+			[19, 01, 23, 75, 03, 34],
+			[88, 02, 77, 73, 07, 63, 67],
+			[99, 65, 04, 28, 06, 16, 70, 92],
+			[41, 41, 26, 56, 83, 40, 80, 70, 33],
+			[41, 48, 72, 33, 47, 32, 37, 16, 94, 29],
+			[53, 71, 44, 65, 25, 43, 91, 52, 97, 51, 14],
+			[70, 11, 33, 28, 77, 73, 17, 78, 39, 68, 17, 57],
+			[91, 71, 52, 38, 17, 14, 91, 43, 58, 50, 27, 29, 48],
+			[63, 66, 04, 68, 89, 53, 67, 30, 73, 16, 69, 87, 40, 31],
+			[04, 62, 98, 27, 23, 09, 70, 98, 73, 93, 38, 53, 60, 04, 23]
+		]
+
+		for (var i = triangle.length - 2; i >= 0; i--) {
+			var row = triangle[i];
+			for (var j = 0; j < row.length; j++) {
+				var max = utils.getMax(triangle[i + 1][j], triangle[i + 1][j + 1]);
+				row[j] += max;
+			}
+		}
+
+		return console.log(triangle[0][0]);
+	},
+	() => {
+		// 67
+		var filePath = path.join(__dirname, '/files/p067_triangle.txt');
+
+		fs.readFile(filePath, 'utf8', (err, data) => {
+			var triangle = data.split("\n");
+			for (var i = 0; i < triangle.length; i++) {
+				triangle[i] = triangle[i].split(" ");
+			}
+			for (var i = triangle.length - 2; i >= 0; i--) {
+				var row = triangle[i];
+				for (var j = 0; j < row.length; j++) {
+					var max = utils.getMax(bigInt(triangle[i + 1][j], 10), bigInt(triangle[i + 1][j + 1]));
+					row[j] = bigInt(row[j]).add(max);
+				}
+			}
+
+			return console.log(triangle[0][0]);
+		});
+	}
 ];
 
 // RUN ALL
@@ -711,4 +869,4 @@ var problems = [
 // 	problem();
 // });
 
-problems[16]();
+problems[19]();
