@@ -766,14 +766,22 @@ var problems = [
 		return console.log(paths);
 	},
 	() => {
-		// TODO: figure out a way around the loss of precision in JS
 		// 16
 		// 2^15 = 32768 and the sum of its digits is 3 + 2 + 7 + 6 + 8 = 26.
 		// What is the sum of the digits of the number 2^1000?
 
-		var num = Math.pow(2, 1000);
+		var num = bigInt(2).pow(1000);
+		var total = 0;
 
-		return console.log(num);
+		for (var i = 0; i < num.value.length; i++) {
+			var arr = num.value[i].toString().split("");
+			arr = arr.map(x => {
+				return parseInt(x);
+			});
+			total += arr.reduce(utils.getSum);
+		}
+
+		return console.log(total);
 	},
 	() => {
 		// 17
@@ -842,28 +850,18 @@ var problems = [
 		return console.log(triangle[0][0]);
 	},
 	() => {
-		// 67
-		var filePath = path.join(__dirname, '/files/p067_triangle.txt');
+		// 19
+		// You are given the following information, but you may prefer to do some research for yourself.
+		// 1 Jan 1900 was a Monday.
+		// Thirty days has September,
+		// April, June and November.
+		// All the rest have thirty-one,
+		// Saving February alone,
+		// Which has twenty-eight, rain or shine.
+		// And on leap years, twenty-nine.
+		// A leap year occurs on any year evenly divisible by 4, but not on a century unless it is divisible by 400.
+		// How many Sundays fell on the first of the month during the twentieth century (1 Jan 1901 to 31 Dec 2000)?
 
-		fs.readFile(filePath, 'utf8', (err, data) => {
-			var triangle = data.split("\n");
-
-			for (var i = 0; i < triangle.length; i++) {
-				triangle[i] = triangle[i].split(" ");
-			}
-
-			for (var i = triangle.length - 2; i >= 0; i--) {
-				var row = triangle[i];
-				var nextRow = triangle[i + 1];
-
-				for (var j = 0; j < row.length; j++) {
-					var max = utils.getMax(parseInt(nextRow[j]), parseInt(nextRow[j + 1]));
-					row[j] = parseInt(row[j]) + max;
-				}
-			}
-
-			return console.log(triangle[0][0]);
-		});
 	}
 ];
 
